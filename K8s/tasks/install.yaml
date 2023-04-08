@@ -20,6 +20,7 @@
   unarchive:
     src: "/tmp/{{ item.src_path }}"
     dest: "{{ item.dest_path }}"
+    remote_src: yes
   loop:
     - {src_path: 'containerd-1.6.2-linux-amd64.tar.gz', dest_path: '/usr/local'}
     - {src_path: 'containerd.service', dest_path: '/usr/lib/systemd/system/'}
