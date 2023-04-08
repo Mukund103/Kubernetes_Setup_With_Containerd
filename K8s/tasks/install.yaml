@@ -31,8 +31,5 @@
 
 - name: Install runc
   become: yes
-  copy:
-    src: "/tmp/runc.amd64"
-    dest: /usr/local/sbin/runc
-    mode: "0755"
+  command: "install -m 755 /tmp/runc.amd64 /usr/local/sbin/runc"
 
