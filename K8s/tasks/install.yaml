@@ -30,7 +30,7 @@
   shell: "mv /tmp/containerd.service /usr/lib/systemd/system/"
 
 - name: Install runc
-  file:
+  copy:
     src: "/tmp/runc.amd64"
     dest: /usr/local/sbin/runc
     mode: "0755"
