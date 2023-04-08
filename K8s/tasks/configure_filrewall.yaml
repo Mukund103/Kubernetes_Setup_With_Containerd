@@ -1,20 +1,21 @@
 - name: Open ports for k8s for http traffic
-  ansible.builtin.command: firewall-cmd --zone=trusted --add-port={{item}} --permanent
+  ufw:
+    rule: allow
+    port: "{{item}}"
   loop:
     - "6443/tcp"
-    - "2379-2380/tcp"
+    - "2379:2380/tcp"
     - "10250/tcp"
     - "10259/tcp"
     - "10257/tcp"
-    - "30000-32767/tcp"
+    - "30000:32767/tcp"
 
-- name: "Set masquerade on trusted zone"
-  ansible.builtin.command: firewall-cmd --zone=trusted --add-masquerade --permanent
+- name: Enable Masquerading
+  ufw:
+    rule: masquerade
+    direction: forward
 
-- name: "Set masquerade"
-  command: "firewall-cmd --add-masquerade --permanent"
-
-- name: Firewalld reload
-  systemd:
-    name: firewalld
+- name: Reload UFW
+  service:
+    name: ufw
     state: reloaded
