@@ -9,17 +9,6 @@
     - "10257/tcp"
     - "30000:32767/tcp"
 
-<<<<<<< HEAD
-=======
-- name: Enable Masquerading
-  become: true
-  ufw:
-    rule: masquerade
-    direction: forward
-
->>>>>>> 15b0fb1ee3b0c1e300aef18c7976d01b9e6d0dfe
 - name: Reload UFW
   become: true
-  service:
-    name: ufw
-    state: reloaded
+  command: ufw reload
