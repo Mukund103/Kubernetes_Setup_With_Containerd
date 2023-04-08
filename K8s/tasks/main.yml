@@ -1,7 +1,13 @@
 ---
 # tasks file for K8s
 - name: Install containerd
-  include_tasks: install.yaml
+  include_tasks: install_containerd.yaml
 
 - name: Configure containerd
-  include_tasks: configure.yaml
+  include_tasks: configure_containerd.yaml
+
+- name: Configure Firewall
+  include_tasks: configure_firewall.yaml
+
+- include_tasks: install.yaml
+

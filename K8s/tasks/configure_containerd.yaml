@@ -1,0 +1,17 @@
+- name: Daemon Reload
+  systemd:
+    daemon_reload: true
+
+- name: Start containerd
+  service:
+    name: containerd
+    state: started
+    enabled: true
+
+#NetworkManager service should be always disabled when we create kubernetes cluster because NetworkManager service interfere with the Kubernetes management, and create problems for kubernetes network. 
+- name: Disable NetworkManager Service if it is active
+  systemd:
+    name: NetworkManager
+    state: stopped
+    enabled: no
+

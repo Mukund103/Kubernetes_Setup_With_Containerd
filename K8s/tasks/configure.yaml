@@ -1,9 +1,0 @@
-- name: Daemon Reload
-  systemd:
-    daemon_reload: true
-    
-- name: Start containerd
-  service:
-    name: containerd
-    state: started
-    enabled: true

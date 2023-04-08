@@ -1,35 +1,19 @@
-- name: Create  /opt/cni/bin folder
-  file:
-    path: /opt/cni/bin
-    state: directory
+- name: Disable swap file
+  command: swapoff -a 
 
-- name: Download containerd, containerd service, nerdctl and runc
-  get_url:
-    url: "{{ item.url }}"
-    dest: "{{ item.dest }}"
-  loop:
-    - {url: 'https://github.com/containerd/containerd/releases/download/v1.6.2/containerd-1.6.2-linux-amd64.tar.gz', dest: '/tmp/'}
-    - {url: 'https://raw.githubusercontent.com/containerd/containerd/main/containerd.service', dest: '/tmp/'}
-    - {url: 'https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64', dest: '/tmp/'}
-    - {url: 'https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz', dest: '/tmp/'}
-    - {url: 'https://github.com/containerd/nerdctl/releases/download/v0.19.0/nerdctl-0.19.0-linux-amd64.tar.gz', dest: '/tmp/'}
-
-- name: Extract containerd-1.6.2-linux-amd64.tar.gz and Move containerd.service
-  become: yes
-  become_user: root
-  unarchive:
-    src: "/tmp/{{ item.src_path }}"
-    dest: "{{ item.dest_path }}"
-    remote_src: yes
-  loop:
-    - {src_path: 'containerd-1.6.2-linux-amd64.tar.gz', dest_path: '/usr/local'}
-    - {src_path: 'cni-plugins-linux-amd64-v1.1.1.tgz' , dest_path: '/opt/cni/bin'}
-    - {src_path: 'nerdctl-0.19.0-linux-amd64.tar.gz' , dest_path: '/usr/local/bin'}
-
-- name: Move Move containerd.service 
-  shell: "mv /tmp/containerd.service /usr/lib/systemd/system/"
-
-- name: Install runc
-  become: yes
-  command: "install -m 755 /tmp/runc.amd64 /usr/local/sbin/runc"
-
+- file:
+    path: /etc/apt/keyrings
+    state: file
+    mode: 0644
+    
+- name: Installing kubeadm, kubelet and kubectl 
+  become: true
+  commnd: "{{item}}"
+  loops:
+  - apt-get update
+  - apt-get install -y apt-transport-https ca-certificates curl
+  - curl -fsSLo /etc/apt/keyrings/kubernetes-archive-keyring.gpg https://packages.cloud.google.com/apt/doc/apt-key.gpg
+  - echo "deb [signed-by=/etc/apt/keyrings/kubernetes-archive-keyring.gpg] https://apt.kubernetes.io/ kubernetes-xenial main" | sudo tee /etc/apt/sources.list.d/kubernetes.list
+  - apt-get update
+  - apt-get install -y kubelet kubeadm kubectl
+  - apt-mark hold kubelet kubeadm kubectl
