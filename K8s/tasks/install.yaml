@@ -1,0 +1,33 @@
+- name: Create  /opt/cni/bin folder
+  file:
+    path: /opt/cni/bin
+    state: directory
+
+- name: Download containerd, containerd service, nerdctl and runc
+  get_url:
+    url: "{{ item.url }}"
+    dest: "{{ item.dest }}"
+  loop:
+    - {url: 'https://github.com/containerd/containerd/releases/download/v1.6.2/containerd-1.6.2-linux-amd64.tar.gz', dest: '/tmp/'}
+    - {url: 'https://raw.githubusercontent.com/containerd/containerd/main/containerd.service', dest: '/tmp/'}
+    - {url: 'https://github.com/opencontainers/runc/releases/download/v1.1.1/runc.amd64', dest: '/tmp/'}
+    - {url: 'https://github.com/containernetworking/plugins/releases/download/v1.1.1/cni-plugins-linux-amd64-v1.1.1.tgz', dest: '/tmp/'}
+    - {url: 'https://github.com/containerd/nerdctl/releases/download/v0.19.0/nerdctl-0.19.0-linux-amd64.tar.gz', dest: '/tmp/'}
+  when: not ('/tmp/{{ item.url.split("/")[-1] }}' | exists)
+
+- name: Extract containerd-1.6.2-linux-amd64.tar.gz and Move containerd.service
+  unarchive:
+    src: "/tmp/{{ item.src_path }}"
+    dest: "{{ item.dest_path }}"
+  loop:
+    - {src_path: 'containerd-1.6.2-linux-amd64.tar.gz', dest_path: '/usr/local'}
+    - {src_path: 'containerd.service', dest_path: '/usr/lib/systemd/system/'}
+    - {src_path: 'cni-plugins-linux-amd64-v1.1.1.tgz' , dest_path: '/opt/cni/bin'}
+    - {src_path: 'nerdctl-0.19.0-linux-amd64.tar.gz' , dest_path: '/usr/local/bin'}
+
+- name: Install runc
+  file:
+    src: "/tmp/runc.amd64"
+    dest: /usr/local/sbin/runc
+    mode: "0755"
+
