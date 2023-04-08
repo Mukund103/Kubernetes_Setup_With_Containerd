@@ -15,6 +15,7 @@
     - {url: 'https://github.com/containerd/nerdctl/releases/download/v0.19.0/nerdctl-0.19.0-linux-amd64.tar.gz', dest: '/tmp/'}
 
 - name: Extract containerd-1.6.2-linux-amd64.tar.gz and Move containerd.service
+  become: yes
   unarchive:
     src: "/tmp/{{ item.src_path }}"
     dest: "{{ item.dest_path }}"
