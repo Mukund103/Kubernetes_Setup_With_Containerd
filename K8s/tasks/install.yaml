@@ -16,6 +16,7 @@
 
 - name: Extract containerd-1.6.2-linux-amd64.tar.gz and Move containerd.service
   become: yes
+  become_user: root
   unarchive:
     src: "/tmp/{{ item.src_path }}"
     dest: "{{ item.dest_path }}"
